@@ -33,6 +33,16 @@ class ProductGridItem extends StatelessWidget {
           trailing: IconButton(
             onPressed: () {
               cart.addItem(product);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text("Produto adicionado com sucesso!"),
+                  duration: const Duration(seconds: 2),
+                  action: SnackBarAction(
+                    label: "DESFAZER",
+                    onPressed: () => cart.removeSingleItem(product.id),
+                  ),
+                ),
+              );
             },
             icon: const Icon(Icons.shopping_cart),
             color: Theme.of(context).colorScheme.secondary,
