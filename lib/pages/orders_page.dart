@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop/components/app_drawer.dart';
 
 class OrdersPage extends StatelessWidget {
   const OrdersPage({super.key});
@@ -14,6 +15,7 @@ class OrdersPage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primary,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
+      drawer: const AppDrawer(),
     );
   }
 }
