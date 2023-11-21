@@ -64,7 +64,7 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
               color: Colors.white,
             ),
             builder: (context, cart, child) => Badgee(
-              value: cart.itemsCount.toString(),
+              value: cart.itemsCount,
               child: child!,
             ),
           ),

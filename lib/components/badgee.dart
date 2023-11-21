@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class Badgee extends StatelessWidget {
   final Widget child;
-  final String value;
+  final int value;
   final Color? color;
 
   const Badgee({
@@ -14,14 +14,8 @@ class Badgee extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        child,
-        Positioned(
-          right: 8,
-          top: 8,
-          child: Container(
+    final existItem = value > 0
+        ? Container(
             padding: const EdgeInsets.all(2),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
@@ -32,11 +26,21 @@ class Badgee extends StatelessWidget {
               minWidth: 16,
             ),
             child: Text(
-              value,
+              value.toString(),
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 10, color: Colors.white),
             ),
-          ),
+          )
+        : Container();
+
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        child,
+        Positioned(
+          right: 8,
+          top: 8,
+          child: existItem,
         )
       ],
     );
