@@ -3,12 +3,11 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:shop/data/dummy_data.dart';
 import 'package:shop/models/product.dart';
 
 class ProductList with ChangeNotifier {
-  final _baseUrl = "https://shop-flutter-a0886-default-rtdb.firebaseio.com";
-  final List<Product> _items = dummyProducts;
+  final _url = "https://shop-flutter-a0886-default-rtdb.firebaseio.com/products.json";
+  final List<Product> _items = [];
 
   List<Product> get items => [..._items];
   List<Product> get favoriteItems => _items.where((product) => product.isFavorite).toList();
@@ -17,7 +16,25 @@ class ProductList with ChangeNotifier {
     return _items.length;
   }
 
-  void saveProduct(Map<String, Object> data) {
+  Future<void> loadProduct() async {
+    _items.clear();
+    final response = await get(Uri.parse(_url));
+    if (response.body == 'null') return;
+    Map<String, dynamic> data = jsonDecode(response.body);
+    data.forEach((productId, productData) {
+      _items.add(Product(
+        id: productId,
+        name: productData['name'],
+        description: productData['description'],
+        price: productData['price'],
+        imageUrl: productData['imageUrl'],
+        isFavorite: productData['isFavorite'],
+      ));
+    });
+    notifyListeners();
+  }
+
+  Future<void> saveProduct(Map<String, Object> data) {
     bool hasId = data['id'] != null;
 
     final product = Product(
@@ -29,15 +46,15 @@ class ProductList with ChangeNotifier {
     );
 
     if (hasId) {
-      updateProduct(product);
+      return updateProduct(product);
     } else {
-      addProduct(product);
+      return addProduct(product);
     }
   }
 
-  void addProduct(Product product) {
-    post(
-      Uri.parse("$_baseUrl/products.json"),
+  Future<void> addProduct(Product product) async {
+    final response = await post(
+      Uri.parse(_url),
       body: jsonEncode(
         {
           "name": product.name,
@@ -47,31 +64,29 @@ class ProductList with ChangeNotifier {
           "isFavorite": product.isFavorite,
         },
       ),
-    ).then((value) {
-      final id = jsonDecode(value.body)['name'];
+    );
 
-      _items.add(
-        Product(
-          id: id,
-          name: product.name,
-          description: product.description,
-          price: product.price,
-          imageUrl: product.imageUrl,
-          isFavorite: product.isFavorite,
-        ),
-      );
-
-      notifyListeners();
-    });
+    final id = jsonDecode(response.body)['name'];
+    _items.add(Product(
+      id: id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      imageUrl: product.imageUrl,
+      isFavorite: product.isFavorite,
+    ));
+    notifyListeners();
   }
 
-  void updateProduct(Product product) {
+  Future<void> updateProduct(Product product) {
     int index = _items.indexWhere((p) => p.id == product.id);
 
     if (index >= 0) {
       _items[index] = product;
       notifyListeners();
     }
+
+    return Future.value();
   }
 
   void removeProduct(Product product) {
@@ -83,24 +98,3 @@ class ProductList with ChangeNotifier {
     }
   }
 }
-
-
-// List<Product> get items {
-//     if (_showFavoriteOnly) {
-//       return _items.where((product) => product.isFavorite).toList();
-//     }
-
-//     return [..._items];
-//   }
-
-//   
-
-//   void showFavoriteOnly() {
-//     _showFavoriteOnly = true;
-//     notifyListeners();
-//   }
-
-//   void showAll() {
-//     _showFavoriteOnly = false;
-//     notifyListeners();
-//   }

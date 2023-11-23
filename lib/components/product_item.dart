@@ -14,64 +14,113 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundImage: NetworkImage(product.imageUrl),
+    return Dismissible(
+      key: ValueKey(product.id),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        color: Colors.red,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 20),
+        margin: const EdgeInsets.symmetric(
+          horizontal: 15,
+          vertical: 4,
+        ),
+        child: const Icon(
+          Icons.delete,
+          color: Colors.white,
+          size: 40,
+        ),
       ),
-      title: Text(product.name),
-      trailing: SizedBox(
-        width: 100,
-        child: Row(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.edit),
-              color: Theme.of(context).primaryColor,
-              onPressed: () {
-                Navigator.of(context).pushNamed(
-                  AppRoutes.PRODUCT_FORM,
-                  arguments: product,
-                );
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete),
-              color: Theme.of(context).colorScheme.error,
-              onPressed: () {
-                showDialog<bool>(
-                  context: context,
-                  builder: (ctx) => AlertDialog(
-                    title: const Text("Excluir Produto?"),
-                    content: const Text("Tem certeza?"),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(ctx).pop(false);
-                        },
-                        child: const Text("Não"),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Provider.of<ProductList>(context, listen: false).removeProduct(product);
-                          Navigator.of(ctx).pop(true);
-                        },
-                        child: const Text("Sim"),
-                      ),
-                    ],
-                  ),
-                ).then(
-                  (value) => {
-                    if (value ?? false)
-                      {
-                        Provider.of<ProductList>(
-                          context,
-                          listen: false,
-                        ).removeProduct(product)
-                      }
-                  },
-                );
-              },
-            ),
-          ],
+      confirmDismiss: (_) {
+        return showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text("Excluir Produto?"),
+            content: const Text("Tem certeza?"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop(false);
+                },
+                child: const Text("Não"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop(true);
+                },
+                child: const Text("Sim"),
+              ),
+            ],
+          ),
+        );
+      },
+      onDismissed: (_) {
+        Provider.of<ProductList>(
+          context,
+          listen: false,
+        ).removeProduct(product);
+      },
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundImage: NetworkImage(product.imageUrl),
+          backgroundColor: Colors.white,
+        ),
+        title: Text(product.name),
+        trailing: SizedBox(
+          width: 100,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.edit),
+                color: Theme.of(context).primaryColor,
+                onPressed: () {
+                  Navigator.of(context).pushNamed(
+                    AppRoutes.PRODUCT_FORM,
+                    arguments: product,
+                  );
+                },
+              ),
+              // IconButton(
+              //   icon: const Icon(Icons.delete),
+              //   color: Theme.of(context).colorScheme.error,
+              //   onPressed: () {
+              //     showDialog<bool>(
+              //       context: context,
+              //       builder: (ctx) => AlertDialog(
+              //         title: const Text("Excluir Produto?"),
+              //         content: const Text("Tem certeza?"),
+              //         actions: [
+              //           TextButton(
+              //             onPressed: () {
+              //               Navigator.of(ctx).pop(false);
+              //             },
+              //             child: const Text("Não"),
+              //           ),
+              //           TextButton(
+              //             onPressed: () {
+              //               Provider.of<ProductList>(context, listen: false).removeProduct(product);
+              //               Navigator.of(ctx).pop(true);
+              //             },
+              //             child: const Text("Sim"),
+              //           ),
+              //         ],
+              //       ),
+              //     ).then(
+              //       (value) => {
+              //         if (value ?? false)
+              //           {
+              //             Provider.of<ProductList>(
+              //               context,
+              //               listen: false,
+              //             ).removeProduct(product)
+              //           }
+              //       },
+              //     );
+              //   },
+              // ),
+            ],
+          ),
         ),
       ),
     );
