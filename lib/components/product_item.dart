@@ -14,6 +14,8 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final msg = ScaffoldMessenger.of(context);
+
     return Dismissible(
       key: ValueKey(product.id),
       direction: DismissDirection.endToStart,
@@ -54,11 +56,19 @@ class ProductItem extends StatelessWidget {
           ),
         );
       },
-      onDismissed: (_) {
-        Provider.of<ProductList>(
-          context,
-          listen: false,
-        ).removeProduct(product);
+      onDismissed: (_) async {
+        try {
+          await Provider.of<ProductList>(
+            context,
+            listen: false,
+          ).removeProduct(product);
+        } catch (err) {
+          msg.showSnackBar(
+            SnackBar(
+              content: Text(err.toString()),
+            ),
+          );
+        }
       },
       child: ListTile(
         leading: CircleAvatar(
