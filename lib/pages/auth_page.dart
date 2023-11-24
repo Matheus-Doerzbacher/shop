@@ -30,6 +30,9 @@ class AuthPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
+                  margin: const EdgeInsets.only(
+                    bottom: 20,
+                  ),
                   padding: const EdgeInsets.symmetric(
                     vertical: 10,
                     horizontal: 70,
@@ -48,7 +51,7 @@ class AuthPage extends StatelessWidget {
                     ],
                   ),
                   child: const Text(
-                    "Mina Loja",
+                    "Minha Loja",
                     style: TextStyle(
                       fontSize: 45,
                       fontFamily: 'Anton',
