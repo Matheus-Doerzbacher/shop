@@ -20,7 +20,6 @@ class OrderList with ChangeNotifier {
     final response = await get(Uri.parse("${Constants.ORDER_BASE_URL}.json"));
     if (response.body == 'null') return;
     Map<String, dynamic> data = jsonDecode(response.body);
-    print(data);
 
     data.forEach((orderId, orderData) {
       _items.add(
