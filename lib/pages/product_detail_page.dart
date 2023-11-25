@@ -20,15 +20,15 @@ class ProductDetailPage extends StatelessWidget {
       body: SingleChildScrollView(
           child: Column(
         children: [
-          SizedBox(
-            height: 300,
+          Container(
+            margin: const EdgeInsets.all(20),
+            height: 400,
             width: double.infinity,
             child: Image.network(
               product.imageUrl,
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
             ),
           ),
-          const SizedBox(height: 10),
           Text(
             "R\$${product.price}",
             style: const TextStyle(
