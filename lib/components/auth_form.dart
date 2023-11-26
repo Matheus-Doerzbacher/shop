@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shop/models/auth.dart';
 
 enum AuthMode { signUp, login }
 
@@ -34,7 +36,7 @@ class _AuthFormState extends State<AuthForm> {
     );
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     final isValidade = _formKey.currentState?.validate() ?? false;
 
     if (!isValidade) {
@@ -45,10 +47,16 @@ class _AuthFormState extends State<AuthForm> {
 
     _formKey.currentState?.save();
 
+    Auth auth = Provider.of(context, listen: false);
+
     if (_isLogin()) {
       // login
     } else {
       // registrar
+      await auth.signup(
+        _authData['email']!,
+        _authData['password']!,
+      );
     }
 
     setState(() => _isLoading = false);
