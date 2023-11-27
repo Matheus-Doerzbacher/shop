@@ -8,21 +8,28 @@ import 'package:shop/models/order.dart';
 import 'package:shop/utils/constants.dart';
 
 class OrderList with ChangeNotifier {
-  final List<Order> _items = [];
+  late List<Order> items;
+  final String? token;
 
-  List<Order> get items => [..._items];
+  OrderList({
+    required this.items,
+    required this.token,
+  });
 
-  int get itemsCount => _items.length;
+  List<Order> get itemsList => [...items];
+
+  int get itemsCount => items.length;
 
   // LOAD PRODUCTS
   Future<void> loadOrders() async {
-    _items.clear();
-    final response = await get(Uri.parse("${Constants.ORDER_BASE_URL}.json"));
+    final List<Order> itemsList = [];
+
+    final response = await get(Uri.parse("${Constants.ORDER_BASE_URL}.json?auth=$token"));
     if (response.body == 'null') return;
     Map<String, dynamic> data = jsonDecode(response.body);
 
     data.forEach((orderId, orderData) {
-      _items.add(
+      itemsList.add(
         Order(
           id: orderId,
           date: DateTime.parse(orderData['date']),
@@ -41,6 +48,8 @@ class OrderList with ChangeNotifier {
         ),
       );
     });
+
+    items = itemsList.reversed.toList();
     notifyListeners();
   }
 
@@ -49,7 +58,7 @@ class OrderList with ChangeNotifier {
     final date = DateTime.now();
 
     final response = await post(
-      Uri.parse("${Constants.ORDER_BASE_URL}.json"),
+      Uri.parse("${Constants.ORDER_BASE_URL}.json?auth=$token"),
       body: jsonEncode(
         {
           "total": cart.totalAmount,
@@ -68,7 +77,7 @@ class OrderList with ChangeNotifier {
     );
 
     final id = jsonDecode(response.body)['name'];
-    _items.insert(
+    items.insert(
       0,
       Order(
         id: id,
