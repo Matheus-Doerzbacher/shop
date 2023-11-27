@@ -40,8 +40,9 @@ class MyApp extends StatelessWidget {
           create: (_) => OrderList(),
           update: (ctx, auth, previus) {
             return OrderList(
-              token: auth.token ?? '',
-              items: previus?.items ?? [],
+              auth.token ?? '',
+              auth.userId ?? '',
+              previus?.items ?? [],
             );
           },
         ),

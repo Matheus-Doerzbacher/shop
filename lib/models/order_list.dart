@@ -9,12 +9,14 @@ import 'package:shop/utils/constants.dart';
 
 class OrderList with ChangeNotifier {
   late List<Order> items;
-  final String? token;
+  final String userId;
+  final String token;
 
-  OrderList({
+  OrderList([
     this.token = '',
+    this.userId = '',
     this.items = const [],
-  });
+  ]);
 
   List<Order> get itemsList => [...items];
 
@@ -24,7 +26,7 @@ class OrderList with ChangeNotifier {
   Future<void> loadOrders() async {
     final List<Order> itemsList = [];
 
-    final response = await get(Uri.parse("${Constants.ORDER_BASE_URL}.json?auth=$token"));
+    final response = await get(Uri.parse("${Constants.ORDER_BASE_URL}/$userId.json?auth=$token"));
     if (response.body == 'null') return;
     Map<String, dynamic> data = jsonDecode(response.body);
 
@@ -55,10 +57,11 @@ class OrderList with ChangeNotifier {
 
   // ADD ORDER
   Future<void> addOrder(Cart cart) async {
+    final List<Order> itemList = [...items];
     final date = DateTime.now();
 
     final response = await post(
-      Uri.parse("${Constants.ORDER_BASE_URL}.json?auth=$token"),
+      Uri.parse("${Constants.ORDER_BASE_URL}/$userId.json?auth=$token"),
       body: jsonEncode(
         {
           "total": cart.totalAmount,
@@ -77,7 +80,7 @@ class OrderList with ChangeNotifier {
     );
 
     final id = jsonDecode(response.body)['name'];
-    items.insert(
+    itemList.insert(
       0,
       Order(
         id: id,
@@ -86,6 +89,8 @@ class OrderList with ChangeNotifier {
         date: date,
       ),
     );
+
+    items = itemList;
     notifyListeners();
   }
 }
