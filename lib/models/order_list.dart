@@ -12,8 +12,8 @@ class OrderList with ChangeNotifier {
   final String? token;
 
   OrderList({
-    required this.items,
-    required this.token,
+    this.token = '',
+    this.items = const [],
   });
 
   List<Order> get itemsList => [...items];

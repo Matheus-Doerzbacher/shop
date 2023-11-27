@@ -7,7 +7,7 @@ import 'package:shop/exceptions/auth_exception.dart';
 class Auth with ChangeNotifier {
   String? _token;
   String? _email;
-  String? _userID;
+  String? _userId;
   DateTime? _expiryDate;
 
   bool get isAuth {
@@ -24,7 +24,7 @@ class Auth with ChangeNotifier {
   }
 
   String? get userId {
-    return isAuth ? _userID : null;
+    return isAuth ? _userId : null;
   }
 
   Future<void> _authenticate(String email, String password, String urlFragament) async {
@@ -46,7 +46,7 @@ class Auth with ChangeNotifier {
     } else {
       _token = body['idToken'];
       _email = body['email'];
-      _userID = body['localId'];
+      _userId = body['localId'];
 
       _expiryDate = DateTime.now().add(
         Duration(

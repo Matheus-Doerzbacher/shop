@@ -9,11 +9,13 @@ import 'package:shop/utils/constants.dart';
 
 class ProductList with ChangeNotifier {
   final String token;
-  final List<Product> items;
+  final String userId;
+  late List<Product> items;
 
   ProductList({
-    required this.token,
-    required this.items,
+    this.token = '',
+    this.userId = '',
+    this.items = const [],
   });
 
   final _baseUrl = Constants.PRODUCT_BASE_URL;
@@ -26,20 +28,26 @@ class ProductList with ChangeNotifier {
   }
 
   Future<void> loadProduct() async {
-    items.clear();
-    final response = await get(Uri.parse("$_baseUrl.json?auth=$token"));
+    final List<Product> itemList = [];
+
+    final response = await get(
+      Uri.parse("$_baseUrl.json?auth=$token"),
+    );
+
     if (response.body == 'null') return;
+
     Map<String, dynamic> data = jsonDecode(response.body);
     data.forEach((productId, productData) {
-      items.add(Product(
+      itemList.add(Product(
         id: productId,
         name: productData['name'],
         description: productData['description'],
         price: productData['price'],
         imageUrl: productData['imageUrl'],
-        isFavorite: productData['isFavorite'],
       ));
     });
+
+    items = itemList.toList();
     notifyListeners();
   }
 
@@ -70,7 +78,6 @@ class ProductList with ChangeNotifier {
           "description": product.description,
           "price": product.price,
           "imageUrl": product.imageUrl,
-          "isFavorite": product.isFavorite,
         },
       ),
     );
@@ -82,7 +89,6 @@ class ProductList with ChangeNotifier {
       description: product.description,
       price: product.price,
       imageUrl: product.imageUrl,
-      isFavorite: product.isFavorite,
     ));
     notifyListeners();
   }
