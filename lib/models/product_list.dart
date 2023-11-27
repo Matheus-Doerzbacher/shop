@@ -36,15 +36,27 @@ class ProductList with ChangeNotifier {
 
     if (response.body == 'null') return;
 
+    final favResponse = await get(
+      Uri.parse(
+        "${Constants.USER_FAVORITES_URL}/$userId.json?auth=$token",
+      ),
+    );
+
+    Map<String, dynamic> favData = favResponse.body == 'null' ? {} : jsonDecode(favResponse.body);
+
     Map<String, dynamic> data = jsonDecode(response.body);
     data.forEach((productId, productData) {
-      itemList.add(Product(
-        id: productId,
-        name: productData['name'],
-        description: productData['description'],
-        price: productData['price'],
-        imageUrl: productData['imageUrl'],
-      ));
+      final isFavorite = favData[productId] ?? false;
+      itemList.add(
+        Product(
+          id: productId,
+          name: productData['name'],
+          description: productData['description'],
+          price: productData['price'],
+          imageUrl: productData['imageUrl'],
+          isFavorite: isFavorite,
+        ),
+      );
     });
 
     items = itemList.toList();
