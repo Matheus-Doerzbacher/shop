@@ -45,6 +45,13 @@ class ProductList with ChangeNotifier {
     Map<String, dynamic> favData = favResponse.body == 'null' ? {} : jsonDecode(favResponse.body);
 
     Map<String, dynamic> data = jsonDecode(response.body);
+
+    if (data.containsKey('error')) {
+      // ignore: avoid_print
+      print(data);
+      return;
+    }
+
     data.forEach((productId, productData) {
       final isFavorite = favData[productId] ?? false;
       itemList.add(
