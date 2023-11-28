@@ -24,9 +24,12 @@ class ProductDetailPage extends StatelessWidget {
             margin: const EdgeInsets.all(20),
             height: 400,
             width: double.infinity,
-            child: Image.network(
-              product.imageUrl,
-              fit: BoxFit.contain,
+            child: Hero(
+              tag: product.id,
+              child: Image.network(
+                product.imageUrl,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
           Text(
