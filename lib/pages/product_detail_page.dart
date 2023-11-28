@@ -20,7 +20,6 @@ class ProductDetailPage extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            backgroundColor: Theme.of(context).colorScheme.primary,
             expandedHeight: 300,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
